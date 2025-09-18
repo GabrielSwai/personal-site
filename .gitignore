@@ -13,7 +13,6 @@ build/
 .venv/
 venv/
 *.venv/
-personal-site.venv/
 
 # Pipenv / Poetry
 Pipfile.lock
@@ -35,3 +34,4 @@ poetry.lock
 *.db
 .env
 .env.*
+.flaskenv
