@@ -1,12 +1,209 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+  <meta property="og:title" content="Gabriel Swai — Founder, Education & Tech">
+  <meta property="og:description" content="Dartmouth ’29. Builder exploring education, tech, and learning science.">
+  <meta property="og:image" content="https://yourdomain.com/professional-headshot.png">
+  <meta property="og:type" content="profile">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- Font Styles -->
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Merriweather', serif;
+    }
+  </style>
 </head>
-<body>
-    <h1>Hello, world!</h1>
-    <p>It's Gabriel!</p>
+<body class="bg-white text-gray-900 antialiased">
+
+  <!-- Sticky Navbar -->
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-white text-black px-3 py-2 rounded">
+    Skip to content
+    </a>
+
+    <header class="sticky top-0 z-50 border-b bg-[#00693e] text-white/95">
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <a href="#" class="flex items-center gap-3">
+        <img src="/professional-headshot.png" alt="Headshot of Gabriel Swai"
+            class="w-10 h-10 rounded-full border-2 border-white/90" width="40" height="40">
+        <span class="text-lg font-semibold tracking-tight">Gabriel Swai</span>
+        </a>
+        <div class="hidden md:flex items-center gap-2">
+        <a href="#about" class="px-4 py-2 rounded-lg hover:bg-white/10 focus:bg-white/10 focus:outline-none">About</a>
+        <a href="#projects" class="px-4 py-2 rounded-lg hover:bg-white/10 focus:bg-white/10 focus:outline-none">Projects</a>
+        <a href="#consulting" class="px-4 py-2 rounded-lg hover:bg-white/10 focus:bg-white/10 focus:outline-none">Consulting</a>
+        <a href="#current" class="px-4 py-2 rounded-lg hover:bg-white/10 focus:bg-white/10 focus:outline-none">Currently</a>
+        <a href="#resume" class="px-4 py-2 rounded-lg hover:bg-white/10 focus:bg-white/10 focus:outline-none">Resume</a>
+        </div>
+        <button id="menuBtn" aria-controls="mobileMenu" aria-expanded="false"
+                class="md:hidden p-2 rounded-lg hover:bg-white/10 focus:bg-white/10" aria-label="Open menu">☰</button>
+    </nav>
+    <div id="mobileMenu" class="md:hidden hidden border-t border-white/10">
+        <div class="max-w-6xl mx-auto px-4 py-2 flex flex-col">
+        <a href="#about" class="px-3 py-3 rounded-lg hover:bg-white/10">About</a>
+        <a href="#projects" class="px-3 py-3 rounded-lg hover:bg-white/10">Projects</a>
+        <a href="#consulting" class="px-3 py-3 rounded-lg hover:bg-white/10">Consulting</a>
+        <a href="#current" class="px-3 py-3 rounded-lg hover:bg-white/10">Currently</a>
+        <a href="#resume" class="px-3 py-3 rounded-lg hover:bg-white/10">Resume</a>
+        </div>
+    </div>
+    </header>
+
+<main id="main">
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-4 py-20 md:py-24">
+    <div class="flex flex-col md:flex-row items-center md:gap-12">
+      <div class="md:w-1/2">
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-6" style="color:#00693e;">
+          Interdisciplinary Builder: Education, Linguistics, & Startups
+        </h1>
+        <p class="text-lg text-gray-700 mb-6">
+          I’m a Dartmouth ’29 exploring startups and computational linguistics (CS + Ling). 
+          My experience spans software, language, and consulting—always focused on fast learning 
+          and cross-disciplinary insight.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="#projects" class="px-5 py-3 rounded-lg text-white" style="background:#00693e;">See Projects</a>
+          <a href="#resume" class="px-5 py-3 rounded-lg border" style="border-color:#00693e; color:#00693e;">View Resume</a>
+        </div>
+      </div>
+      <div class="md:w-1/2 mt-10 md:mt-0">
+        <img src="/mousilaukee-photo.png" alt="Gabriel on Mount Moosilauke"
+             class="w-full max-w-xl rounded-2xl shadow-lg border border-gray-200"
+       width="960" height="1200" loading="lazy" decoding="async">
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="scroll-mt-24 max-w-4xl mx-auto px-4 py-16">
+    <h2 class="text-3xl font-bold mb-4" style="color:#00693e;">About</h2>
+    <p class="text-gray-700 leading-relaxed mb-6">
+      I’m passionate about a range of topics. 
+      Beyond product development, I’ve published technical linguistic analysis in <span class="font-medium"><a href="https://fiatlingua.org/2024/11/" target="_blank">Fiat Lingua</a></span>, 
+      presented at the international <span class="font-medium"><a href="https://conlang.org/language-creation-conference/lcc10/#swai" target="_blank">Language Creation Conference (LCC)</a></span> twice, 
+      and continue to explore how linguistics and tech intersect.
+    </p>
+    <h3 class="text-xl font-semibold mt-6 mb-2" style="color:#00693e;">Languages</h3>
+    <ul class="list-disc pl-6 text-gray-700 space-y-2">
+      <li><span class="font-medium">🇨🇳 Chinese (Mandarin):</span> Intermediate-High in 6 weeks as a NSLI-Y Scholar, 4x average pace.</li>
+      <li><span class="font-medium">🇪🇸 Spanish:</span> Learned to conversational fluency within a year.</li>
+      <li><span class="font-medium">🇵🇹 Portuguese:</span> Reached strong conversational level in months via self-immersion.</li>
+      <li><span class="font-medium">🇫🇷 French:</span> Gained working proficiency through high school and self-study.</li>
+      <li><span class="font-medium">🇹🇿 Swahili:</span> Heritage speaker with former fluency.</li>
+    </ul>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="scroll-mt-24 max-w-6xl mx-auto px-4 py-16 bg-gray-50">
+    <h2 class="text-3xl font-bold mb-8" style="color:#00693e;">Projects</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      <article class="p-6 bg-white border rounded-xl shadow-sm">
+        <h3 class="text-xl font-semibold mb-2">Unilearn — Mastery-Learning LMS</h3>
+        <p class="text-gray-700 mb-3">
+  Proposed a mastery-learning LMS that improved teacher workflows and visibility. Built v1 in six weeks,
+  iterated with teachers & students, and piloted school-wide. Presented a fully built application to the CEO of the
+  <a href="https://mastery.org/" target="_blank" rel="noopener" class="font-medium underline">Mastery Transcript Consortium (MTC)</a>.
+</p>
+      </article>
+      <article class="p-6 bg-white border rounded-xl shadow-sm">
+        <h3 class="text-xl font-semibold mb-2">MindfulMeals — AI Recipe Planning</h3>
+        <p class="text-gray-700 mb-3">
+          Cloud recipe manager with AI-generated shopping lists, nutrition data, and household sharing. Conducted idea validation, customer analytics, and built a complete MVP in 6 weeks.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Consulting -->
+  <section id="consulting" class="scroll-mt-24 max-w-6xl mx-auto px-4 py-16">
+    <h2 class="text-3xl font-bold mb-8" style="color:#00693e;">Consulting</h2>
+    <p class="text-gray-700 mb-6">
+      Through my school, I’ve led consulting projects for organizations across public policy, education, 
+      and tech. Each project gave me experience in scoping problems, analyzing processes, 
+      and delivering actionable solutions.
+    </p>
+    <div class="grid md:grid-cols-2 gap-8">
+      <article class="p-6 bg-white border rounded-xl shadow-sm">
+        <h3 class="text-xl font-semibold mb-2">Woodrow Wilson International Center for Scholars</h3>
+<p class="text-gray-700 mb-3">
+  DC-based think tank.<br>
+  <span class="font-medium">Challenge:</span> Increase public awareness of a new plastic pollution reduction initiative.<br>
+  <span class="font-medium">Outcome:</span> Proposed a $1M+ grant strategy for awareness and outreach.<br><br>
+  “<i>…his team came up with a great presentation on possible funding sources for the partner to expand their outreach. The partner said the information was very helpful…</i>”
+  <br><span class="font-medium"><b>— Grace Collins, former Liaison, U.S. Department of Education</b></span>
+</p>
+      </article>
+      <article class="p-6 bg-white border rounded-xl shadow-sm">
+        <h3 class="text-xl font-semibold mb-2">Pigybak</h3>
+        <p class="text-gray-700 mb-3">
+          Seed-stage SaaS startup.<br>
+          <span class="font-medium">Challenge:</span> Build a returning customer base while keeping costs low.<br>
+          <span class="font-medium">Outcome:</span> Analyzed public data and conducted market research to reduce CAC.<br><br>
+        “<i>It was a multi-pronged solution, well supported by their research.</i>”
+        <br> <span class="font-medium"><b>— Liz Pryor, co-founder and former CEO of Chill Pop</b></span>
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Currently Working On -->
+  <section id="current" class="scroll-mt-24 max-w-6xl mx-auto px-4 py-16 bg-gray-50">
+    <h2 class="text-3xl font-bold mb-8" style="color:#00693e;">Currently Working On</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      <article class="p-6 bg-white border rounded-xl shadow-sm">
+        <h3 class="text-xl font-semibold mb-2">Stealth Startup</h3>
+        <p class="text-gray-700">Working on the early stages of my most recent build.</p>
+      </article>
+      <article class="p-6 bg-white border rounded-xl shadow-sm">
+        <h3 class="text-xl font-semibold mb-2">Automated Flashcard Generator</h3>
+        <p class="text-gray-700">A fun side-project to build on my computational linguistics skills that automatically generates flashcards for various languages.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Resume -->
+  <section id="resume" class="scroll-mt-24 max-w-4xl mx-auto px-4 py-16">
+    <h2 class="text-3xl font-bold mb-6" style="color:#00693e;">Resume</h2>
+    <div class="rounded-xl border p-6">
+      <p class="text-gray-700 mb-4">
+        Founder, linguist, and consultant. Explore my full background below or download my resume.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="/Gabriel_Swai_Resume.pdf" class="px-5 py-3 rounded-lg text-white" style="background:#00693e;" download>Download PDF</a>
+        <a href="https://www.linkedin.com/in/gabriel-swai" target="_blank" class="px-5 py-3 rounded-lg border" style="border-color:#00693e; color:#00693e;">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t mt-12" style="background:#00693e;">
+    <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between text-sm text-white/90">
+      <p>&copy; 2025 Gabriel Swai</p>
+      <div class="flex gap-4">
+        <a href="https://github.com/GabrielSwai" target="_blank" class="hover:underline">GitHub</a>
+        <a href="mailto:gabriel.a.swai@gmail.com" target="_blank" class="hover:underline">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile menu toggle -->
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn?.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+  </script>
+
 </body>
 </html>
