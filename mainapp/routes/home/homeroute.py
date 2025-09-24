@@ -7,3 +7,7 @@ homeapp = Blueprint( 'homeroutes', __name__,
 @homeapp.route('/')
 def home():
     return render_template('home.html')
+
+@homeapp.route('/test')
+def test():
+    return render_template('test.html')

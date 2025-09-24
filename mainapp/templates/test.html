@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Cal.com Inline Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
+      .frame-wrap { max-width: 920px; }
+      iframe { width: 100%; height: 720px; border: 0; background: transparent; border-radius: 16px; }
+      .hint { color: #555; font-size: 14px; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>Inline test</h1>
+
+    <!-- Inline Cal.com scheduler via iframe -->
+    <div class="frame-wrap">
+      <iframe
+        title="Schedule with Gabriel"
+        id="cal-inline"
+        src="https://cal.com/gabriel-swai/30?embed=true&theme=auto"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="clipboard-write; fullscreen">
+      </iframe>
+      <div class="hint">
+        If you see a blank area, check extensions (ad-blockers) and any site CSP; this loads directly from <code>https://cal.com</code>.
+      </div>
+    </div>
+  </body>
+</html>
