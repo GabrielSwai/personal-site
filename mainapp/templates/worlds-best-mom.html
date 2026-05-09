@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Photo Album</title>
+  <style>
+    :root {
+      --bg: #f2eee6;
+      --book-bg: #d8c3a5;
+      --page: #fffaf0;
+      --page-edge: #d7c8a8;
+      --ink: #241f1a;
+      --muted: #6f6357;
+      --shadow: rgba(45, 32, 18, 0.24);
+      --shadow-heavy: rgba(45, 32, 18, 0.42);
+      --accent: #8a5a33;
+      --radius: 18px;
+      --book-width: min(92vw, 1100px);
+      --book-height: 100%;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background-image: url("mothers-day/flower-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      /* background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.8), transparent 30%),
+        linear-gradient(135deg, #f6f0e7, var(--bg)); */
+      color: var(--ink);
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+      overflow-x: hidden;
+    }
+
+    .album-app {
+      width: 100%;
+      height: 100dvh;
+      padding: 20px 16px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 14px;
+      justify-items: center;
+      overflow: hidden;
+    }
+
+    .album-header {
+      text-align: center;
+      max-width: 760px;
+    }
+
+    .album-header h1 {
+      margin: 0 0 6px;
+      font-size: clamp(2rem, 4vw, 4rem);
+      letter-spacing: -0.04em;
+    }
+
+    .album-header p {
+      margin: 0;
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .book-shell {
+      width: var(--book-width);
+      height: var(--book-height);
+      perspective: 2400px;
+      position: relative;
+    }
+
+    .book {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 30px 30px var(--shadow));
+    }
+
+    .book::before {
+      content: "";
+      position: absolute;
+      inset: 2% 48.7% 2% 48.7%;
+      z-index: 1000;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.2), rgba(255,255,255,0.55), rgba(0,0,0,0.18));
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .spread-bg {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--book-bg);
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.25),
+        inset 0 0 28px rgba(0,0,0,0.12);
+    }
+
+    .static-page {
+      position: relative;
+      padding: clamp(18px, 3vw, 42px);
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.08), transparent 10%),
+        linear-gradient(var(--page), #f8eedb);
+      overflow: hidden;
+    }
+
+    .static-page.right {
+      background:
+        linear-gradient(270deg, rgba(0,0,0,0.08), transparent 10%),
+        linear-gradient(var(--page), #f8eedb);
+    }
+
+    .static-page::after,
+    .page-face::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(120, 95, 60, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 95, 60, 0.025) 1px, transparent 1px);
+      background-size: 22px 22px;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+    }
+
+    .paper-stack {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .paper {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transition: transform 900ms cubic-bezier(.22,.61,.36,1), z-index 0ms linear 450ms;
+      will-change: transform;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .paper.flipped {
+      transform: rotateY(-180deg);
+    }
+
+    .paper.turning {
+      z-index: 999 !important;
+      transition: transform 900ms cubic-bezier(.22,.61,.36,1);
+    }
+
+    .page-face {
+      position: absolute;
+      inset: 0;
+      padding: clamp(18px, 3vw, 42px);
+      backface-visibility: hidden;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.10), transparent 12%),
+        linear-gradient(var(--page), #f8eedb);
+      border-left: 1px solid rgba(0,0,0,0.08);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.55),
+        inset 12px 0 28px rgba(0,0,0,0.05),
+        -10px 0 18px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    .page-face.back {
+      transform: rotateY(180deg);
+      background:
+        linear-gradient(270deg, rgba(0,0,0,0.10), transparent 12%),
+        linear-gradient(var(--page), #f8eedb);
+      border-left: none;
+      border-right: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .page-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 18px;
+    }
+
+    .media-frame {
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      border: 12px solid #fffdf7;
+      border-bottom-width: 34px;
+      background: #eee3cf;
+      box-shadow: 0 14px 24px rgba(0,0,0,0.16);
+      transform: rotate(var(--tilt, -1deg));
+      overflow: hidden;
+    }
+
+    .media-frame {
+      position: relative;
+    }
+
+    .media-frame img,
+    .media-frame video {
+      position: absolute;
+      width: calc(100% * var(--zoom, 1));
+      height: calc(100% * var(--zoom, 1));
+      left: var(--focus-x, 50%);
+      top: var(--focus-y, 50%);
+      transform: translate(
+        calc(var(--focus-x, 50%) * -1),
+        calc(var(--focus-y, 50%) * -1)
+      );
+      object-fit: cover;
+      display: block;
+    }
+
+    .caption {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .caption h2 {
+      margin: 0 0 6px;
+      font-size: clamp(1.2rem, 2.4vw, 2.1rem);
+      letter-spacing: -0.03em;
+    }
+
+    .caption p {
+      margin: 0;
+      line-height: 1.55;
+      color: var(--muted);
+      font-size: clamp(0.92rem, 1.4vw, 1.05rem);
+    }
+
+    .placeholder-page {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      /* border: 2px dashed rgba(138, 90, 51, 0.35); */
+      border-radius: 14px;
+      padding: 24px;
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .cover-page {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: clamp(28px, 5vw, 64px);
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(255,255,255,0.22), transparent 28%),
+        linear-gradient(135deg, #7a4f2b, #3b2618 64%, #1f1712);
+      color: #fff7e8;
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.16),
+        inset 0 0 42px rgba(0,0,0,0.38);
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+    }
+
+    .cover-page-inner {
+      width: min(100%, 420px);
+      display: grid;
+      justify-items: center;
+      gap: 16px;
+    }
+
+    .cover-emblem {
+      width: 74px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,247,232,0.6);
+      border-radius: 999px;
+      font-size: 2rem;
+      box-shadow: 0 0 0 8px rgba(255,247,232,0.08);
+    }
+
+    .cover-page h2 {
+      margin: 0;
+      font-size: clamp(2.4rem, 5vw, 4.8rem);
+      line-height: 0.92;
+      letter-spacing: -0.06em;
+    }
+
+    .cover-page p {
+      margin: 0;
+      max-width: 30ch;
+      color: rgba(255,247,232,0.78);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    .empty-page {
+      height: 100%;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 18px;
+      background: var(--ink);
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.18);
+      transition: transform 160ms ease, opacity 160ms ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .page-counter {
+      min-width: 110px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    @media (max-width: 760px) {
+      :root {
+        --book-height: min(76vh, 640px);
+      }
+
+      .book-shell {
+        width: min(94vw, 460px);
+      }
+
+      .spread-bg {
+        grid-template-columns: 1fr;
+      }
+
+      .static-page.left {
+        display: none;
+      }
+
+      .paper {
+        width: 100%;
+      }
+
+      .book::before {
+        display: none;
+      }
+
+      .page-face,
+      .static-page {
+        padding: 22px;
+      }
+
+      .page-face.back {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .paper {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="album-app">
+    <header class="album-header">
+      <h1>Happy Mothers’ Day!</h1>
+      <p></p>
+    </header>
+
+    <section class="book-shell" aria-label="Interactive photo album">
+      <div class="book" id="book">
+        <div class="spread-bg" aria-hidden="true">
+          <div class="static-page left" id="leftStatic"></div>
+          <div class="static-page right" id="rightStatic"></div>
+        </div>
+        <div class="paper-stack" id="paperStack"></div>
+      </div>
+    </section>
+
+    <nav class="controls" aria-label="Album controls">
+      <button id="prevBtn" type="button">← Previous</button>
+      <span class="page-counter" id="pageCounter">Page 1</span>
+      <button id="nextBtn" type="button">Next →</button>
+    </nav>
+  </main>
+
+  <script>
+    // Add/remove objects here. The album rebuilds itself automatically.
+    // type can be "image", "video", or "text".
+    const albumItems = [
+      {
+        type: "text",
+        title: "🎉 Happy Mothers’ Day! 🥳",
+        text: "Since I can’t give you a card in person, I thought that a digital photo album was the next best thing! :) ❤️"
+      },
+      {
+        type: "image",
+        src: "mothers-day/north-chagrin.png",
+        title: "North Chagrin",
+        text: "We were so cute when we were little!",
+        zoom: "1.25"
+      },
+      {
+        type: "image",
+        src: "mothers-day/phd.png",
+        title: "Your Graduation",
+        text: "Such a nostalgic photo :)",
+        zoom: "1",
+        focusX: "75%",
+        focusY: "25%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/flowers.png",
+        title: "Last Mothers’ Day",
+        text: "Back when I actually lived at home :P",
+        zoom: "1",
+        focusX: "0%",
+        focusY: "0%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/2016.png",
+        title: "New Years Eve (2016)",
+        text: "I can't believe it's been 10 years 😭",
+        zoom: "1"
+      },
+      {
+        type: "image",
+        src: "mothers-day/ngorogoro.png",
+        title: "Ngorogoro",
+        text: "I think this is after I broke my iPad (oops)",
+        zoom: "1.5"
+      },
+      {
+        type: "image",
+        src: "mothers-day/monti.png",
+        title: "Family Picture (w/ Noel + Monti)",
+        text: "Before he started eating poop...",
+        zoom: "1.15",
+        focusX: "20%",
+        focusY: "0%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/easter.png",
+        title: "Easter Daffodils",
+        text: "The flowers were really pretty that year!",
+        zoom: "1",
+        focusX: "50%",
+        focusY: "50%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/graduation.png",
+        title: "My Graduation",
+        text: "So cute!",
+        zoom: "1.25",
+        focusX: "50%",
+        focusY: "0%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/chicago.png",
+        title: "Chicago",
+        text: "Before Finya’s graduation",
+        zoom: "1.5",
+        focusX: "50%",
+        focusY: "40%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/christmas.png",
+        title: "Deck the Hall",
+        text: "From the light show at Stan Hywet Hall!",
+        zoom: "1.5",
+        focusX: "40%",
+        focusY: "20%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/hotdog.png",
+        title: "Palm Springs",
+        text: "Moms can have fun too, I guess...",
+        zoom: "1.25",
+        focusX: "40%",
+        focusY: "0%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/barbie.png",
+        title: "The Barbie Movie",
+        text: "Matching pink! :)",
+        zoom: "1.15",
+        focusX: "50%",
+        focusY: "0%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/ny.png",
+        title: "New York",
+        text: "Such a cute photo!",
+        zoom: "1",
+        focusX: "50%",
+        focusY: "50%"
+      },
+      {
+        type: "image",
+        src: "mothers-day/dartmouth.png",
+        title: "Parents’ Weekend",
+        text: "Dartmouth mom 😛",
+        zoom: "1.5",
+        focusX: "70%",
+        focusY: "50%"
+      },
+      {
+        type: "video",
+        src: "mothers-day/video.MOV",
+        title: "Easter Last Year",
+        text: "Seems like you and Rehema had fun 😂",
+        zoom: "1",
+        focusX: "50%",
+        focusY: "50%"
+      }
+    ];
+
+    const paperStack = document.querySelector("#paperStack");
+    const leftStatic = document.querySelector("#leftStatic");
+    const rightStatic = document.querySelector("#rightStatic");
+    const prevBtn = document.querySelector("#prevBtn");
+    const nextBtn = document.querySelector("#nextBtn");
+    const pageCounter = document.querySelector("#pageCounter");
+
+    let currentSpread = 0;
+    let isAnimating = false;
+    let papers = [];
+
+    function chunkIntoSpreads(items) {
+      const pages = [...items.map(makeContentPage)]; // Optional: makeCoverPage(), makeBackPage(), and makeEmptyPage()
+      if (pages.length % 2 !== 0) pages.push(makeBlankPage()); // Makes the first plage blank of the # of imgs is even
+
+      const spreads = [];
+      for (let i = 0; i < pages.length; i += 2) {
+        spreads.push({ left: pages[i], right: pages[i + 1] });
+      }
+      return spreads;
+    }
+
+    function makeCoverPage() {
+      return `
+        <section class="cover-page" aria-label="Album cover">
+          <div class="cover-page-inner">
+            <div class="cover-emblem" aria-hidden="true">✦</div>
+            <h2>Field<br />Notes</h2>
+            <p>A living photo album for images, videos, captions, and memories.</p>
+          </div>
+        </section>
+      `;
+    }
+
+    function makeEmptyPage() {
+      return `<div class="empty-page" aria-hidden="true"></div>`;
+    }
+
+    function makeBackPage() {
+      return `
+        <div class="placeholder-page">
+          <div>
+            <h2>The End</h2>
+            <p>Add more media to <code>albumItems</code> and this book grows automatically.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function makeBlankPage() {
+      return `<div class="placeholder-page"><p>Blank page</p></div>`;
+    }
+
+    function escapeHTML(value = "") {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function makeContentPage(item, index) {
+      const title = escapeHTML(item.title || `Page ${index + 1}`);
+      const text = escapeHTML(item.text || "");
+      const tilt = `${(index % 2 === 0 ? -1 : 1) * (0.5 + (index % 3) * 0.35)}deg`;
+      const zoom = Number(item.zoom || 1);
+      const focusX = escapeHTML(item.focusX || "50%");
+      const focusY = escapeHTML(item.focusY || "50%");
+
+      if (item.type === "text") {
+        return `
+          <article class="page-content">
+            <div class="placeholder-page">
+              <div>
+                <h1>${title}</h1>
+                <p>${text}</p>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+      
+      const mediaStyle = `style="--zoom: ${zoom}; --focus-x: ${focusX}; --focus-y: ${focusY};"`;
+      const media = item.type === "video"
+        ? `<video ${mediaStyle} src="${escapeHTML(item.src)}" poster="${escapeHTML(item.poster || "")}" autoplay muted loop playsinline preload="auto"></video>`
+        : `<img ${mediaStyle} src="${escapeHTML(item.src)}" alt="${escapeHTML(item.alt || title)}" loading="lazy" />`;
+
+    return `
+      <article class="page-content">
+        <figure class="media-frame" style="--tilt: ${tilt};">
+          ${media}
+        </figure>
+        <section class="caption">
+          <h2>${title}</h2>
+          <p>${text}</p>
+        </section>
+      </article>
+    `;
+    }
+
+    function buildAlbum() {
+      const spreads = chunkIntoSpreads(albumItems);
+      leftStatic.innerHTML = spreads[0].left;
+      rightStatic.innerHTML = spreads[0].right;
+      paperStack.innerHTML = "";
+      currentSpread = 0;
+      papers = [];
+
+      for (let i = 1; i < spreads.length; i++) {
+        const paper = document.createElement("div");
+        paper.className = "paper";
+        paper.dataset.index = String(i - 1);
+        paper.style.zIndex = String(spreads.length - i);
+        paper.innerHTML = `
+          <div class="page-face front">${spreads[i].right}</div>
+          <div class="page-face back">${spreads[i].left}</div>
+        `;
+        paper.addEventListener("click", () => {
+          const paperIndex = Number(paper.dataset.index);
+          if (paperIndex === currentSpread) nextPage();
+          else if (paperIndex === currentSpread - 1) prevPage();
+        });
+        paperStack.appendChild(paper);
+        papers.push(paper);
+      }
+
+      updateControls();
+      playVisibleVideos();
+    }
+
+    function nextPage() {
+      if (isAnimating || currentSpread >= papers.length) return;
+      flipPaper(currentSpread, true);
+      currentSpread += 1;
+      updateControls();
+    }
+
+    function prevPage() {
+      if (isAnimating || currentSpread <= 0) return;
+      currentSpread -= 1;
+      flipPaper(currentSpread, false);
+      updateControls();
+    }
+
+    function flipPaper(index, forward) {
+      const paper = papers[index];
+      isAnimating = true;
+      pauseAllVideos();
+      paper.classList.add("turning");
+
+      requestAnimationFrame(() => {
+        paper.classList.toggle("flipped", forward);
+      });
+
+      window.setTimeout(() => {
+        paper.classList.remove("turning");
+        paper.style.zIndex = forward ? String(index + 1) : String(papers.length - index);
+        isAnimating = false;
+        playVisibleVideos();
+      }, 920);
+    }
+
+    function pauseAllVideos() {
+      document.querySelectorAll("video").forEach(video => video.pause());
+    }
+
+    function pauseAllVideos() {
+      document.querySelectorAll("video").forEach(video => video.pause());
+    }
+
+    function playVisibleVideos() {
+      document.querySelectorAll("video[autoplay]").forEach(video => {
+        const rect = video.getBoundingClientRect();
+
+        const isVisible =
+        rect.width > 0 &&
+        rect.height > 0 &&
+        rect.right > 0 &&
+        rect.left < window.innerWidth &&
+        rect.bottom > 0 &&
+        rect.top < window.innerHeight;
+
+        if (isVisible) {
+        video.play().catch(() => {
+            // Browser blocked autoplay. Usually means video is not muted.
+        });
+        }
+      });
+    }
+
+    function updateControls() {
+      prevBtn.disabled = currentSpread === 0;
+      nextBtn.disabled = currentSpread === papers.length;
+      pageCounter.textContent = `${Math.min(currentSpread + 1, papers.length + 1)} / ${papers.length + 1}`;
+    }
+
+    prevBtn.addEventListener("click", prevPage);
+    nextBtn.addEventListener("click", nextPage);
+
+    window.addEventListener("keydown", event => {
+      if (event.key === "ArrowRight") nextPage();
+      if (event.key === "ArrowLeft") prevPage();
+    });
+
+    buildAlbum();
+  </script>
+</body>
+</html>

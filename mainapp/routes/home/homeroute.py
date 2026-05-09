@@ -8,6 +8,6 @@ homeapp = Blueprint( 'homeroutes', __name__,
 def home():
     return render_template('home.html')
 
-@homeapp.route('/test')
+@homeapp.route('/worlds-best-mom')
 def test():
-    return render_template('test.html')
+    return render_template('worlds-best-mom.html')
