@@ -51,7 +51,7 @@ def parse_tones(phrase, default_tone):
     tones = ""
 
     for i in range(len(phrase.lower())):
-        char = phrase[i]
+        char = phrase.lower()[i]
 
         if char == " ":
             tones = tones[0:len(tones)-1]
